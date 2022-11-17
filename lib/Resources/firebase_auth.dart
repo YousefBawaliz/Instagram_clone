@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 // import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/Models/user.dart' as model;
 import 'package:instagram_clone/Resources/Storage_methods.dart';
 
 class AuthMethods {
@@ -34,15 +35,22 @@ class AuthMethods {
         String photoUrl = await StorageMethods()
             .uploadImageToStorage('profile Pics', file, false);
 
-        await _firestore.collection('users').doc(cred.user!.uid).set({
-          'username': username,
-          'uid': cred.user!.uid,
-          'email': email,
-          'bio': bio,
-          'followers': [],
-          'following': [],
-          'photoUrl': photoUrl
-        });
+        //add user to our firestore database
+
+        model.User _user = model.User(
+          username: username,
+          uid: cred.user!.uid,
+          photoUrl: photoUrl,
+          email: email,
+          bio: bio,
+          followers: [],
+          following: [],
+        );
+
+        await _firestore
+            .collection('users')
+            .doc(cred.user!.uid)
+            .set(_user.toJson());
       }
       res = "success";
     } on FirebaseAuthException catch (err) {
@@ -58,6 +66,7 @@ class AuthMethods {
   }
 
   //firebaseloginmethods
+
   Future<String> logInUser(
       {required String email, required String password}) async {
     String res = 'something went wrong';
