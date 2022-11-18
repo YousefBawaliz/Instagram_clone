@@ -55,16 +55,16 @@ class _Comment_tileState extends State<Comment_tile> {
   //   setState(() {});
   // }
 
-  // deletePost(String postId) async {
-  //   try {
-  //     await FireStoreMethods().deletePost(postId);
-  //   } catch (err) {
-  //     showSnackBar(
-  //       context,
-  //       err.toString(),
-  //     );
-  //   }
-  // }
+  addFavourite(String postId) async {
+    try {
+      await FireStoreMethods().addFavourite(postId);
+    } catch (err) {
+      showSnackBar(
+        context,
+        err.toString(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,48 +117,47 @@ class _Comment_tileState extends State<Comment_tile> {
                     ),
                   ),
                 ),
-                // widget.snap['uid'].toString() == user.uid
-                //     ? IconButton(
-                //         onPressed: () {
-                //           showDialog(
-                //             useRootNavigator: false,
-                //             context: context,
-                //             builder: (context) {
-                //               return Dialog(
-                //                 child: ListView(
-                //                     padding: const EdgeInsets.symmetric(
-                //                         vertical: 16),
-                //                     shrinkWrap: true,
-                //                     children: [
-                //                       'Delete',
-                //                     ]
-                //                         .map(
-                //                           (e) => InkWell(
-                //                             child: Container(
-                //                               padding:
-                //                                   const EdgeInsets.symmetric(
-                //                                       vertical: 12,
-                //                                       horizontal: 16),
-                //                               child: Text(e),
-                //                             ),
-                //                             // onTap: () {
-                //                             //   deletePost(
-                //                             //     widget.snap['postId']
-                //                             //         .toString(),
-                //                             //   );
-                //                             //   // remove the dialog box
-                //                             //   Navigator.of(context).pop();
-                //                             // },
-                //                           ),
-                //                         )
-                //                         .toList()),
-                //               );
-                //             },
-                //           );
-                //         },
-                //         icon: const Icon(Icons.more_vert),
-                //       )
-                //     : Container(),
+                widget.snap['uid'].toString() == user.uid
+                    ? IconButton(
+                        onPressed: () {
+                          showDialog(
+                            useRootNavigator: false,
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                child: ListView(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    shrinkWrap: true,
+                                    children: [
+                                      'favourite',
+                                    ]
+                                        .map(
+                                          (e) => InkWell(
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 16),
+                                              child: Text(e),
+                                            ),
+                                            onTap: () {
+                                              addFavourite(
+                                                widget.snap['CommentId']
+                                                    .toString(),
+                                              );
+                                              // remove the dialog box
+                                            },
+                                          ),
+                                        )
+                                        .toList()),
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.more_vert),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -312,16 +311,16 @@ class _Comment_tileState extends State<Comment_tile> {
                 //     ),
                 //   ),
                 // ),
-                Container(
-                  child: Text(
-                    DateFormat.yMMMd()
-                        .format(widget.snap['datePublished'].toDate()),
-                    style: const TextStyle(
-                      color: secondaryColor,
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                ),
+                // Container(
+                //   child: Text(
+                //     DateFormat.yMMMd()
+                //         .format(widget.snap['datePublished'].toDate()),
+                //     style: const TextStyle(
+                //       color: secondaryColor,
+                //     ),
+                //   ),
+                //   padding: const EdgeInsets.symmetric(vertical: 4),
+                // ),
               ],
             ),
           )
