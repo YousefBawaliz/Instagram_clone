@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/Provider/user_provider.dart';
+import 'package:instagram_clone/Resources/firestore_methods.dart';
 import 'package:instagram_clone/Utils/colors.dart';
 import 'package:provider/provider.dart';
+
+import '../Utils/utils.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -11,11 +14,54 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _commentText = TextEditingController();
   bool isLoading = false;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _commentText.dispose();
+  }
+
+  void postComment(String uid, String username) async {
+    setState(() {
+      isLoading = true;
+    });
+    // start the loading
+    try {
+      // upload to storage and db
+      String res = await FireStoreMethods().uploadPost(
+        _commentText.text,
+        uid,
+        username,
+      );
+      if (res == "success") {
+        setState(() {
+          isLoading = false;
+        });
+        showSnackBar(
+          context,
+          'Posted!',
+        );
+        // clearImage();
+      } else {
+        showSnackBar(context, res);
+      }
+    } catch (err) {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(
+        context,
+        err.toString(),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    //get user info
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -30,10 +76,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
         centerTitle: false,
         actions: <Widget>[
           TextButton(
-            onPressed: () => postImage(
+            onPressed: () => postComment(
               userProvider.getUser.uid,
               userProvider.getUser.username,
-              userProvider.getUser.photoUrl,
             ),
             child: const Text(
               "Post",
@@ -64,7 +109,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.3,
                 child: TextField(
-                  controller: _descriptionController,
+                  controller: _commentText,
                   decoration: const InputDecoration(
                       hintText: "Write a caption...", border: InputBorder.none),
                   maxLines: 8,
